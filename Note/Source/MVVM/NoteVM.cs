@@ -38,7 +38,7 @@ namespace Note.Source.MVVM
 
         private void SwitchTimer()
         {
-            _model.StartSpellCheck();
+            _model.StartSpellCheckAsync();
         }
     }
 }

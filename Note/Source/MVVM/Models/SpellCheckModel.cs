@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Prism.Mvvm;
 
 namespace Note.Source.MVVM.Models
@@ -18,12 +20,14 @@ namespace Note.Source.MVVM.Models
         #region Properties
 
         public string DictionaryPatch { get; private set; }
-        public ObservableCollection<WrongWord> WrongWords { get; set; }
+
+        public ObservableCollection<WrongWord> WrongWords { get; }
+
         public string Text { get; set; }
 
         #endregion
 
-
+        
         #region Constructors
 
         public SpellCheckModel()
@@ -39,9 +43,15 @@ namespace Note.Source.MVVM.Models
 
         #region Public func
 
-        public void StartSpellCheck()
+        public async void StartSpellCheckAsync()
         {
-            SpellCheck();
+            var wrongWords = await Task.Run(()=>SpellCheck());
+
+            if (WrongWords.Any()) WrongWords.Clear();
+            foreach (var newWrongWord in wrongWords)
+            {
+                WrongWords.Add(newWrongWord);
+            }
         }
 
         #endregion
@@ -49,9 +59,10 @@ namespace Note.Source.MVVM.Models
 
         #region private func
 
-        private void SpellCheck()
+        private IEnumerable<WrongWord> SpellCheck()
         {
-            if (string.IsNullOrEmpty(Text)) return;
+            var currentWrongWords = new List<string>();
+            if (string.IsNullOrEmpty(Text)) return new List<WrongWord>();
 
             var textCopy = Text;
 
@@ -60,21 +71,19 @@ namespace Note.Source.MVVM.Models
 
             var words = textCopy.Split().Select(x => x.Trim(punctuation));
 
+
             foreach (var word in words)
             {
-                if (string.IsNullOrEmpty(word)) continue;
-                if (WrongWords.Count != 0 && Contains(word)) continue;
-
+                if (string.IsNullOrEmpty(word) || currentWrongWords.Contains(word)) continue;
 
                 var withoutMis = CheakWord(word);
                 if (!withoutMis)
                 {
-                    var similarWords = GetSimilarWords(word);
-                    var wrongWord = new WrongWord(word, new ObservableCollection<string>(similarWords));
-                    WrongWords.Add(wrongWord);
+                    currentWrongWords.Add(word);
                 }
             }
 
+            return GetProcessWrongWords(currentWrongWords);
         }
 
         private IEnumerable<string> GetSimilarWords(string word)
@@ -130,17 +139,19 @@ namespace Note.Source.MVVM.Models
             return result;
         }
 
-        private bool Contains(string word)
+        private IEnumerable<WrongWord> GetProcessWrongWords(IEnumerable<string> wrongWordsList)
         {
-            foreach (var wrongWord in WrongWords)
+            var processedWrongWords = new List<WrongWord>();
+
+            foreach (var word in wrongWordsList)
             {
-                if (word == wrongWord.Word)
-                    return true;
+                var similarWords = GetSimilarWords(word);
+                var wrongWord = new WrongWord(word, new ObservableCollection<string>(similarWords));
+                processedWrongWords.Add(wrongWord);
             }
 
-            return false;
+            return processedWrongWords;
         }
-
         #endregion
     }
 }
