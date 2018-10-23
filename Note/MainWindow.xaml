@@ -5,11 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Note"
         xmlns:mvvm="clr-namespace:Note.Source.MVVM"
+        xmlns:models="clr-namespace:Note.Source.MVVM.Models"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1000">
     <Window.DataContext>
         <mvvm:NoteVM/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <Style x:Key="myHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility" Value="Collapsed" />
+        </Style>
+    </Window.Resources>
+
     <Grid Background="#FF2D2D30">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
@@ -26,18 +34,57 @@
             </Grid.RowDefinitions>
 
 
+            <Label VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Content="{Binding WrongWords.Count}"
+                   Foreground="#FFFD0E0E"/>
             
-            <ListView ItemsSource="{Binding WrongWords, Mode=OneWay}" 
+            <ListView ItemsSource="{Binding WrongWords, Mode=OneWay, UpdateSourceTrigger=LostFocus}" 
                             Grid.Row="1" Background="#FF2D2D30"
                             Foreground="Aqua"
-                            Margin="10, 0"
-                            
+                            Margin="10, 0"                            
                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <ListView.Resources>
+
+                    <DataTemplate  x:Key="ContextWrongWordTempl" DataType="models:WrongWord" >
+                        <TextBlock MinWidth="100" Text="{Binding Word}" HorizontalAlignment="Stretch" Background="#FF2D2D30" Foreground="Aqua">
+                            <TextBlock.ContextMenu>
+                                <ContextMenu ItemsSource="{Binding SimilarWords, UpdateSourceTrigger = LostFocus}">
+                                    <ContextMenu.ItemContainerStyle>
+                                        <Style TargetType="{x:Type MenuItem}">
+                                            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType=mvvm:NoteVM},Path=ReplaceWordCommand}"/>
+                                            <Setter Property="CommandParameter" Value="{Binding}"/>
+                                        </Style>
+                                    </ContextMenu.ItemContainerStyle>
+
+                                    <ContextMenu.ItemTemplate>
+
+                                        <DataTemplate DataType="{x:Type models:WrongWord}">
+                                            <TextBlock Text="{Binding}">
+
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ContextMenu.ItemTemplate>
+                                </ContextMenu>
+
+                                
+                            </TextBlock.ContextMenu>
+                        </TextBlock>
+                    </DataTemplate>
+
+                </ListView.Resources>
+
+                <ListView.View>
+                    <GridView ColumnHeaderContainerStyle="{StaticResource myHeaderStyle}">
+                        <GridViewColumn Header="" CellTemplate="{StaticResource ResourceKey = ContextWrongWordTempl}"/>
+                    </GridView>
+                </ListView.View>
             </ListView>
             
             <WrapPanel Grid.Row="2" Orientation="Vertical" Margin="20">
-                <WrapPanel Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding IsTimerEnabled}" Command="{Binding EnableCheckingCommand}" Content="Spell Check" Foreground="Aqua"/>
+                <CheckBox IsChecked="{Binding IsTimerEnabled}" Command="{Binding EnableCheckingCommand}" Content="Spell Check" Foreground="Aqua"/>
+                <WrapPanel>
+                    <Label Content="Check Time" Foreground="Aqua"/>
+                    <TextBox Text="{Binding SleepTimeSec}" VerticalAlignment="Center" BorderBrush="#FF2D2D30"  Foreground="Aqua" Background="#FF2D2D30"/>
                 </WrapPanel>
             </WrapPanel>
 

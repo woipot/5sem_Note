@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -54,6 +53,22 @@ namespace Note.Source.MVVM.Models
             }
         }
 
+         public static int GetDifferencesCount(string first, string second)
+        {
+            var minLength = Math.Min(first.Length, second.Length);
+
+            var result = Math.Abs(first.Length - second.Length);
+
+            for (var i = 0; i < minLength; i++)
+            {
+                if (first[i] != second[i])
+                    result++;
+            }
+
+
+            return result;
+        }
+
         #endregion
 
 
@@ -106,21 +121,7 @@ namespace Note.Source.MVVM.Models
             return _dictinary.Contains(word);
         }
 
-        private static int GetDifferencesCount(string first, string second)
-        {
-            var minLength = Math.Min(first.Length, second.Length);
-
-            var result = Math.Abs(first.Length - second.Length);
-
-            for (var i = 0; i < minLength; i++)
-            {
-                if (first[i] != second[i])
-                    result++;
-            }
-
-
-            return result;
-        }
+       
 
         private static HashSet<string> LoadDictionary(string patch)
         {
