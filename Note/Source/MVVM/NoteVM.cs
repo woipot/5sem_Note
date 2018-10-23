@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Timers;
+using System.Windows;
 using System.Windows.Threading;
+using GalaSoft.MvvmLight.Messaging;
 using Note.Source.MVVM.Models;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -70,12 +72,15 @@ namespace Note.Source.MVVM
 
             EnableCheckingCommand = new DelegateCommand(SwitchTimer);
             ReplaceWordCommand = new DelegateCommand<object[]>(ReplaceWord);
+            AddCommand = new DelegateCommand<object>(AddToDict);
 
             _isModified = false;
         }
 
 
         public DelegateCommand EnableCheckingCommand { get; set; }
+
+        public DelegateCommand<object> AddCommand { get; set; }
 
         public DelegateCommand<object[]> ReplaceWordCommand { get; set; }
 
@@ -86,7 +91,6 @@ namespace Note.Source.MVVM
         }
 
 
-        //Todo add tag to wrong word and set parametr as WrongWord in xaml
         private void ReplaceWord(object[] param)
         {
             var oldWord = param[1] as string;
@@ -95,6 +99,23 @@ namespace Note.Source.MVVM
             if(string.IsNullOrEmpty(oldWord) || string.IsNullOrEmpty(newWord)) return;
             
             Text = Text.Replace(oldWord, newWord);
+        }
+
+        private void AddToDict(object param)
+        {
+            if (param is string word)
+            {
+                try
+                {
+                    _model.AddToDictionary(word);
+                    _isModified = true;
+
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Dictionary is not found");
+                }
+            }
         }
     }
 }

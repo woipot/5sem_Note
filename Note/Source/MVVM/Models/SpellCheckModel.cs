@@ -154,5 +154,17 @@ namespace Note.Source.MVVM.Models
             return processedWrongWords;
         }
         #endregion
+
+        public void AddToDictionary(string word)
+        {
+            _dictinary.Add(word);
+            
+            var sw = new StreamWriter(DictionaryPatch, true);
+
+            sw.WriteLine(word);
+
+            sw.Dispose();
+
+        }
     }
 }
