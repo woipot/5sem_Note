@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Note"
         xmlns:mvvm="clr-namespace:Note.Source.MVVM"
         xmlns:models="clr-namespace:Note.Source.MVVM.Models"
+        xmlns:converters="clr-namespace:Note.Source.Converters"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1000">
     <Window.DataContext>
@@ -13,9 +14,10 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <Style x:Key="myHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+        <Style x:Key="MyHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Visibility" Value="Collapsed" />
         </Style>
+        <converters:MultiParamsConverter x:Key="MultiConverter"/>
     </Window.Resources>
 
     <Grid Background="#FF2D2D30">
@@ -36,7 +38,9 @@
 
             <Label VerticalAlignment="Center" HorizontalAlignment="Center"
                    Content="{Binding WrongWords.Count}"
-                   Foreground="#FFFD0E0E"/>
+                   Foreground="#FFFD0E0E">
+
+            </Label>
             
             <ListView ItemsSource="{Binding WrongWords, Mode=OneWay, UpdateSourceTrigger=LostFocus}" 
                             Grid.Row="1" Background="#FF2D2D30"
@@ -46,35 +50,36 @@
                 <ListView.Resources>
 
                     <DataTemplate  x:Key="ContextWrongWordTempl" DataType="models:WrongWord" >
-                        <TextBlock MinWidth="100" Text="{Binding Word}" HorizontalAlignment="Stretch" Background="#FF2D2D30" Foreground="Aqua">
-                            <TextBlock.ContextMenu>
-                                <ContextMenu ItemsSource="{Binding SimilarWords, UpdateSourceTrigger = LostFocus}">
+                        <Label MinWidth="100" Content="{Binding Word}" HorizontalAlignment="Stretch" Background="#FF2D2D30" Foreground="Aqua">
+                            
+                            
+                            
+                            <Label.ContextMenu>
+                                <ContextMenu ItemsSource="{Binding  SimilarWords, UpdateSourceTrigger = LostFocus}">
                                     <ContextMenu.ItemContainerStyle>
                                         <Style TargetType="{x:Type MenuItem}">
-                                            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType=mvvm:NoteVM},Path=ReplaceWordCommand}"/>
-                                            <Setter Property="CommandParameter" Value="{Binding}"/>
+                                            <Setter Property="Command" Value="{Binding  RelativeSource={RelativeSource FindAncestor, AncestorType=ListView},Path=DataContext.ReplaceWordCommand}"/>
+                                            
+                                            <Setter Property="CommandParameter">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource MultiConverter}">
+                                                        <Binding/>
+                                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=Label}" Path="Content"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
                                         </Style>
                                     </ContextMenu.ItemContainerStyle>
-
-                                    <ContextMenu.ItemTemplate>
-
-                                        <DataTemplate DataType="{x:Type models:WrongWord}">
-                                            <TextBlock Text="{Binding}">
-
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </ContextMenu.ItemTemplate>
                                 </ContextMenu>
-
                                 
-                            </TextBlock.ContextMenu>
-                        </TextBlock>
+                            </Label.ContextMenu>
+                        </Label>
                     </DataTemplate>
 
                 </ListView.Resources>
 
                 <ListView.View>
-                    <GridView ColumnHeaderContainerStyle="{StaticResource myHeaderStyle}">
+                    <GridView ColumnHeaderContainerStyle="{StaticResource MyHeaderStyle}">
                         <GridViewColumn Header="" CellTemplate="{StaticResource ResourceKey = ContextWrongWordTempl}"/>
                     </GridView>
                 </ListView.View>

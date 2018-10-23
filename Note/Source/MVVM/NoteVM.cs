@@ -30,7 +30,7 @@ namespace Note.Source.MVVM
             {
                 _model.Text = value;
                 _isModified = true;
-                OnPropertyChanged(Text);
+                OnPropertyChanged();
             }
         }
 
@@ -69,7 +69,7 @@ namespace Note.Source.MVVM
             _timer.Start();
 
             EnableCheckingCommand = new DelegateCommand(SwitchTimer);
-            ReplaceWordCommand = new DelegateCommand<object>(ReplaceWord);
+            ReplaceWordCommand = new DelegateCommand<object[]>(ReplaceWord);
 
             _isModified = false;
         }
@@ -77,7 +77,7 @@ namespace Note.Source.MVVM
 
         public DelegateCommand EnableCheckingCommand { get; set; }
 
-        public DelegateCommand<object> ReplaceWordCommand { get; set; }
+        public DelegateCommand<object[]> ReplaceWordCommand { get; set; }
 
 
         private void SwitchTimer()
@@ -87,14 +87,14 @@ namespace Note.Source.MVVM
 
 
         //Todo add tag to wrong word and set parametr as WrongWord in xaml
-        private void ReplaceWord(object param)
+        private void ReplaceWord(object[] param)
         {
-            var i = 0;
-            //var str = param as string;
-            //if (str != null)
-            //{
-            //    _model.Replace(str, word);
-            //}
+            var oldWord = param[1] as string;
+            var newWord = param[0] as string;
+
+            if(string.IsNullOrEmpty(oldWord) || string.IsNullOrEmpty(newWord)) return;
+            
+            Text = Text.Replace(oldWord, newWord);
         }
     }
 }

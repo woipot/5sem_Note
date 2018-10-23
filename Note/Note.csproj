@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Prism, Version=6.2.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.6.2.1\lib\net45\Prism.dll</HintPath>
     </Reference>
@@ -57,6 +58,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Source\Converters\MultiParamsConverter.cs" />
     <Compile Include="Source\MVVM\Models\WrongWord.cs" />
     <Compile Include="Source\MVVM\NoteVM.cs" />
     <Compile Include="Source\MVVM\Models\SpellCheckModel.cs" />
