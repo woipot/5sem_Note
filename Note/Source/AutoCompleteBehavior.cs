@@ -27,12 +27,8 @@ namespace Note.Source
         public static readonly DependencyProperty AutoCompleteDictionaryProperty =
             DependencyProperty.RegisterAttached("Dictionary",
                 typeof(IEnumerable<string>), typeof(AutoCompleteBehavior),
-                new UIPropertyMetadata(null, OnIncorrectWordFound));
+                new UIPropertyMetadata(null, null));
 
-        private static void OnIncorrectWordFound(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-
-        }
 
         #region Items Source
 
