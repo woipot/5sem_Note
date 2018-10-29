@@ -7,6 +7,7 @@
         xmlns:models="clr-namespace:Note.Source.MVVM.Models"
         xmlns:converters="clr-namespace:Note.Source.Converters"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:source="clr-namespace:Note.Source"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1000">
     <Window.DataContext>
@@ -27,7 +28,9 @@
         </Grid.ColumnDefinitions>
 
 
-        <TextBox VerticalScrollBarVisibility="Visible" Grid.Column="0" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"/>
+        <TextBox source:AutoCompleteBehavior.AutoCompleteEnabled="True"
+                 source:AutoCompleteBehavior.Dictionary="{Binding Dictionary}"
+            VerticalScrollBarVisibility="Visible" Grid.Column="0" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"/>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition MinHeight="25" MaxHeight="50"/>

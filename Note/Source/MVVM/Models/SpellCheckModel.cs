@@ -13,7 +13,7 @@ namespace Note.Source.MVVM.Models
         public const int NormalDeviation = 2;
 
 
-        private readonly HashSet<string> _dictinary;
+        private readonly HashSet<string> _dictionary;
 
 
         #region Properties
@@ -24,15 +24,17 @@ namespace Note.Source.MVVM.Models
 
         public string Text { get; set; }
 
+        public HashSet<string> Dictionary => _dictionary;
+
         #endregion
 
-        
+
         #region Constructors
 
         public SpellCheckModel()
         {
             DictionaryPatch = Directory.GetCurrentDirectory() + @"\Resources\pldb-win.txt";
-            _dictinary = LoadDictionary(DictionaryPatch);
+            _dictionary = LoadDictionary(DictionaryPatch);
 
             WrongWords = new ObservableCollection<WrongWord>();
         }
@@ -105,7 +107,7 @@ namespace Note.Source.MVVM.Models
         {
             var result = new List<string>();
 
-            foreach (var dictionaryWord in _dictinary)
+            foreach (var dictionaryWord in _dictionary)
             {
                 var differenceConut = GetDifferencesCount(word, dictionaryWord);
 
@@ -118,7 +120,7 @@ namespace Note.Source.MVVM.Models
 
         private bool CheakWord(string word)
         {
-            return _dictinary.Contains(word);
+            return _dictionary.Contains(word);
         }
 
        
@@ -157,7 +159,7 @@ namespace Note.Source.MVVM.Models
 
         public void AddToDictionary(string word)
         {
-            _dictinary.Add(word);
+            _dictionary.Add(word);
             
             var sw = new StreamWriter(DictionaryPatch, true);
 

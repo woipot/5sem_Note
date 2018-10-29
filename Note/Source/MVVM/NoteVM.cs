@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Timers;
 using System.Windows;
@@ -48,6 +49,7 @@ namespace Note.Source.MVVM
             }
         }
 
+        public HashSet<string> Dictionary => _model.Dictionary;
 
 
         public NoteVM()

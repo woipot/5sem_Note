@@ -76,6 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Source\AutoCompleteBehavior.cs" />
     <Compile Include="Source\Converters\MultiParamsConverter.cs" />
     <Compile Include="Source\MVVM\Models\WrongWord.cs" />
     <Compile Include="Source\MVVM\NoteVM.cs" />
