@@ -210,7 +210,7 @@ namespace Note.Source
             if (index == 0) return 0;
             for (var i = index - 1; i > 0; i--)
             {
-                if (char.IsSeparator(text[i]))
+                if (char.IsSeparator(text[i]) || text[i] =='\r' || text[i]=='\n')
                 {
                     return i + 1;
                 }
